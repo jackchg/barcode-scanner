@@ -99,7 +99,26 @@ MainActivity extends AppCompatActivity
   getOutputDirectory ()
   {
     String appName = getResources().getString(R.string.app_name);
-    // File file = new File (it, appName);
-    return null;
+    File[] mediaDirs = getExternalMediaDirs();
+    for (File mediaDir: mediaDirs)
+      {
+        // Not sure if this actually works
+        File newFile = new File (mediaDir, appName);
+        newFile.mkdirs ();
+      }
+    File mediaDir = null;
+    if (mediaDirs.length > 0)
+      {
+        mediaDir = mediaDirs[0];
+      }
+    return mediaDir;
+  }
+
+  @Override
+  protected void
+  onDestroy ()
+  {
+    super.onDestroy();
+    cameraExecutor.shutdown();
   }
 }
