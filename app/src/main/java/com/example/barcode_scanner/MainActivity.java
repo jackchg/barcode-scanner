@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;

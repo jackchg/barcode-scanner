@@ -2,6 +2,7 @@ package com.example.barcode_scanner;
 
 import android.Manifest;
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ public class Singleton
   int REQUEST_CODE_PERMISSIONS;
   String[] REQUIRED_PERMISSIONS;
 
+  private SQLiteDatabase barcodeDatabase;
   String barcode;
 
   private
@@ -32,6 +34,7 @@ public class Singleton
     REQUEST_CODE_PERMISSIONS = 10;
     REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
     cameraExecutor = Executors.newSingleThreadExecutor();
+
   }
 
   public static Singleton getInstance () { return instance; }
@@ -42,8 +45,16 @@ public class Singleton
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
   public ExecutorService getCameraExecutor () { return cameraExecutor; }
-
   public void setActivity (Activity activity) { this.activity = activity; }
+
+  public SQLiteDatabase getBarcodeDatabase ()
+  {
+    if (barcodeDatabase == null)
+      {
+        barcodeDatabase = BarcodeDatabase.retrieveDatabase ();
+      }
+    return barcodeDatabase;
+  }
 
   public void setOutputDirectory (File outputDirectory)
   {
@@ -57,7 +68,4 @@ public class Singleton
         this.barcode = barcode;
       }
   }
-
-
-
 }
