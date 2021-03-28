@@ -2,7 +2,10 @@ package com.example.barcode_scanner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -11,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +24,9 @@ import android.widget.Toast;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -120,6 +127,12 @@ MainActivity extends AppCompatActivity
         Preview preview = new Preview.Builder().build();
         preview.setSurfaceProvider(viewFinder.createSurfaceProvider());
 
+        imageCapture = new ImageCapture.Builder ().build ();
+
+        ImageAnalysis imageAnalyzer = new ImageAnalysis.Builder ().build ();
+        imageAnalyzer.setAnalyzer (cameraExecutor,
+                                   new LuminosityAnalyzer ());
+
         // Select back camera as a default
         CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
@@ -130,7 +143,9 @@ MainActivity extends AppCompatActivity
           // Bind use cases to camera
           cameraProvider.bindToLifecycle(lifecycleOwner,
                                          cameraSelector,
-                                         preview);
+                                         preview,
+                                         imageCapture,
+                                         imageAnalyzer);
         } catch (Exception exception) {
           Log.e(singleton.getTag(),
               "Use case binding failed",
@@ -145,10 +160,50 @@ MainActivity extends AppCompatActivity
   private void
   takePhoto ()
   {
-    Toast toast = Toast.makeText(this,
-                            "Taking Photo",
-                                 Toast.LENGTH_SHORT);
-    toast.show();
+    // Get a stable reference of the modifiable image capture use case
+    if (imageCapture == null)
+      {
+        return;
+      }
+
+    // Create a time-stamepd output file to hold the image
+    SimpleDateFormat dateFormat =
+        new SimpleDateFormat(singleton.getFilenameFormat(),
+                             Locale.US);
+    String dateFormatString = dateFormat.format(System.currentTimeMillis ())
+                              + ".jpg";
+    File photoFile = new File (outputDirectory, dateFormatString);
+
+    // Create output options object which contains file + metadata
+    ImageCapture.OutputFileOptions outputOptions =
+        new ImageCapture.OutputFileOptions.Builder (photoFile).build ();
+
+    // Set up image capture listener, which is triggered after photo has
+    // been taken
+    imageCapture.takePicture (
+        outputOptions,
+        ContextCompat.getMainExecutor (this),
+        new ImageCapture.OnImageSavedCallback ()
+        {
+          @Override
+          public void
+          onError (ImageCaptureException exception)
+          {
+            Log.e (singleton.getTag (),
+                   "Photo capture failed: ${exception.message}",
+                   exception);
+          }
+
+          @Override
+          public void
+          onImageSaved (ImageCapture.OutputFileResults output)
+          {
+            Uri savedUri = Uri.fromFile (photoFile);
+            String msg = "Photo capture succeeded: " + savedUri.toString();
+            Toast.makeText (getBaseContext(), msg, Toast.LENGTH_SHORT).show ();
+            Log.d (singleton.getTag(), msg);
+          }
+        });
   }
 
   private File
@@ -199,5 +254,41 @@ MainActivity extends AppCompatActivity
             finish();
           }
       }
+  }
+
+  private class
+  LuminosityAnalyzer implements ImageAnalysis.Analyzer {
+    private LuminosityAnalyzer ()
+    {
+
+    }
+
+    private byte[]
+    toByteArray (ByteBuffer buffer)
+    {
+      buffer.rewind();
+      byte[] data = new byte[buffer.remaining ()];
+      buffer.get (data);
+      return data;
+    }
+
+    @Override
+    public void
+    analyze (ImageProxy image)
+    {
+      ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+      byte[] data = toByteArray (buffer);
+      byte[] pixels = new byte[data.length];
+      double totalVal = 0;
+      for (int i = 0; i < data.length; i++)
+        {
+          byte b = data[i];
+          pixels[i] = (byte)(b & 0xFF);
+          totalVal += pixels[i];
+        }
+      double luma = totalVal / pixels.length;
+      Log.d (singleton.getTag(), "Average luminosity: " + luma);
+      image.close();
+    }
   }
 }
