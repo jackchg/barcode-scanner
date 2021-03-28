@@ -5,7 +5,8 @@ import android.Manifest;
 import java.util.Arrays;
 import java.util.List;
 
-public class Singleton {
+public class Singleton
+{
   private static Singleton instance = new Singleton();
   static String TAG;
   String FILENAME_FORMAT;
