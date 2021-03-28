@@ -1,25 +1,46 @@
 package com.example.barcode_scanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageInfo;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,17 +48,15 @@ import java.util.concurrent.Executors;
 public class
 MainActivity extends AppCompatActivity
 {
-  /* Most code taken from
+  /* CameraX code mostly taken from
    * https://codelabs.developers.google.com/codelabs/camerax-getting-started#1
-   * but translated somewhat into Java
+   * but translated into Java to the best possible extent.
+   *
+   * Barcode analyzer code taken from
+   * https://developers.google.com/ml-kit/vision/barcode-scanning
+   * to obtain barcode values.
    */
   private Singleton singleton = Singleton.getInstance();
-
-  private ImageCapture imageCapture = null;
-
-  // Neither should be null when accessing
-  private File outputDirectory = null;
-  private ExecutorService cameraExecutor = null;
 
   @Override
   protected void
@@ -45,110 +64,30 @@ MainActivity extends AppCompatActivity
   {
     super.onCreate (savedInstanceState);
     setContentView (R.layout.activity_main);
+    singleton.setActivity (this);
+    singleton.setOutputDirectory (getOutputDirectory());
 
     // Request all camera permissions
-    if (allPermissionsGranted ())
+    if (Permissions.allPermissionsGranted ())
       {
-        startCamera ();
+        Camera.startCamera ();
       }
     else
       {
-        ActivityCompat.requestPermissions (this,
-                                          singleton.getReqPerms(),
-                                          singleton.getReqCodePerms());
-
+        Permissions.requestPermissions (this);
       }
 
     // Set up the listener for the take photo button
     Button cameraCaptureButton = findViewById (R.id.camera_capture_button);
-    cameraCaptureButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        takePhoto ();
-      }
-    });
-
-    outputDirectory = getOutputDirectory ();
-
-    cameraExecutor = Executors.newSingleThreadExecutor();
-  }
-
-  private boolean
-  allPermissionsGranted ()
-  {
-    boolean allGranted = true;
-    for (String permission: singleton.getReqPerms())
-      {
-        int perm = ContextCompat.checkSelfPermission (getBaseContext(),
-                                                      permission);
-        boolean permGranted = perm == PackageManager.PERMISSION_GRANTED;
-        allGranted = permGranted && allGranted;
-      }
-    return allGranted;
-  }
-
-  private void
-  startCamera ()
-  {
-    Toast toast = Toast.makeText(this,
-                                 "Starting Camera",
-                                 Toast.LENGTH_SHORT);
-    toast.show();
-
-    ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
-        ProcessCameraProvider.getInstance (this);
-
-    // This may not work
-    LifecycleOwner lifecycleOwner = this;
-    cameraProviderFuture.addListener (new Runnable ()
+    cameraCaptureButton.setOnClickListener(new View.OnClickListener ()
     {
       @Override
-      public void run () {
-        // Used to bind the lifecycle of cameras to the lifecycle owner
-        ProcessCameraProvider cameraProvider = null;
-        try
-          {
-            cameraProvider = cameraProviderFuture.get ();
-          }
-        catch (ExecutionException | InterruptedException exception)
-          {
-            exception.printStackTrace ();
-          }
-
-        // Preview
-        PreviewView viewFinder = findViewById(R.id.viewFinder);
-        Preview preview = new Preview.Builder().build();
-        preview.setSurfaceProvider(viewFinder.createSurfaceProvider());
-
-        // Select back camera as a default
-        CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
-        try {
-          // Unbind use cases before rebinding
-          cameraProvider.unbindAll();
-
-          // Bind use cases to camera
-          cameraProvider.bindToLifecycle(lifecycleOwner,
-                                         cameraSelector,
-                                         preview);
-        } catch (Exception exception) {
-          Log.e(singleton.getTag(),
-              "Use case binding failed",
-              exception);
-        }
+      public void
+      onClick (View view)
+      {
+        Camera.takePhoto ();
       }
-
-    }, ContextCompat.getMainExecutor (this));
-
-  }
-
-  private void
-  takePhoto ()
-  {
-    Toast toast = Toast.makeText(this,
-                            "Taking Photo",
-                                 Toast.LENGTH_SHORT);
-    toast.show();
+    });
   }
 
   private File
@@ -176,7 +115,8 @@ MainActivity extends AppCompatActivity
   onDestroy ()
   {
     super.onDestroy();
-    cameraExecutor.shutdown();
+    ExecutorService cameraExecutor = singleton.getCameraExecutor();
+    cameraExecutor.shutdown ();
   }
 
   @Override
@@ -185,19 +125,8 @@ MainActivity extends AppCompatActivity
                               String[] permissions,
                               int[] grantResults)
   {
-    if (requestCode == singleton.getReqCodePerms ())
-      {
-        if (allPermissionsGranted ())
-          {
-            startCamera();
-          }
-        else
-          {
-            Toast.makeText (this,
-                            "Permissions not granted by the user.",
-                            Toast.LENGTH_SHORT).show();
-            finish();
-          }
-      }
+    Permissions.onRequestPermissionsResult (requestCode,
+                                            permissions,
+                                            grantResults);
   }
 }
