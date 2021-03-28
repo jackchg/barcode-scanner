@@ -12,6 +12,8 @@ public class Singleton {
   int REQUEST_CODE_PERMISSIONS;
   String[] REQUIRED_PERMISSIONS;
 
+  String barcode;
+
   private
   Singleton ()
   {
@@ -26,6 +28,7 @@ public class Singleton {
   public int getReqCodePerms () { return REQUEST_CODE_PERMISSIONS; }
   public String getTag () { return TAG; }
   public String getFilenameFormat () { return FILENAME_FORMAT; }
+  public void setBarcode (String barcode) { this.barcode = barcode; System.out.println(barcode); }
 
 
 }

@@ -1,10 +1,13 @@
 package com.example.barcode_scanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageInfo;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -14,6 +17,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +27,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -129,9 +144,13 @@ MainActivity extends AppCompatActivity
 
         imageCapture = new ImageCapture.Builder ().build ();
 
-        ImageAnalysis imageAnalyzer = new ImageAnalysis.Builder ().build ();
+        ImageAnalysis.Builder imageAnalyzerBuild =
+            new ImageAnalysis.Builder ();
+        imageAnalyzerBuild
+            .setBackpressureStrategy (ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST);
+        ImageAnalysis imageAnalyzer = imageAnalyzerBuild.build ();
         imageAnalyzer.setAnalyzer (cameraExecutor,
-                                   new LuminosityAnalyzer ());
+                                   new BarcodeAnalyzer ());
 
         // Select back camera as a default
         CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
@@ -257,7 +276,62 @@ MainActivity extends AppCompatActivity
   }
 
   private class
-  LuminosityAnalyzer implements ImageAnalysis.Analyzer {
+  BarcodeAnalyzer implements ImageAnalysis.Analyzer
+  {
+    @Override
+    @ExperimentalGetImage
+    public void analyze (ImageProxy imageProxy)
+    {
+      Image mediaImage = imageProxy.getImage ();
+      if (mediaImage != null)
+        {
+          ImageInfo imageInfo = imageProxy.getImageInfo();
+          InputImage image =
+              InputImage.fromMediaImage(mediaImage,
+                                        imageInfo.getRotationDegrees());
+          BarcodeScanner scanner = BarcodeScanning.getClient ();
+          Task<List<Barcode>> result = scanner.process (image)
+              .addOnSuccessListener(new OnSuccessListener<List<Barcode>> ()
+              {
+                @Override
+                public void onSuccess(List<Barcode> barcodes)
+                {
+                  for (Barcode barcode: barcodes)
+                    {
+                      // Rect bounds = barcode.getBoundingBox ();
+                      // Point[] corners = barcode.getCornerPoints ();
+
+                      String rawValue = barcode.getRawValue ();
+                      singleton.setBarcode (rawValue);
+                    }
+                }
+              })
+              .addOnFailureListener(new OnFailureListener()
+              {
+                @Override
+                public void onFailure(@NonNull Exception e)
+                {
+                  Toast toast = Toast.makeText (getBaseContext(),
+                                                "Failed to recognize",
+                                                Toast.LENGTH_SHORT);
+                  toast.show ();
+                }
+              })
+              .addOnCompleteListener(new OnCompleteListener<List<Barcode>>()
+              {
+                @Override
+                public void onComplete(@NonNull Task<List<Barcode>> task)
+                {
+                  imageProxy.close();
+                }
+              });
+        }
+    }
+  }
+
+  private class
+  LuminosityAnalyzer implements ImageAnalysis.Analyzer
+  {
     private LuminosityAnalyzer ()
     {
 
