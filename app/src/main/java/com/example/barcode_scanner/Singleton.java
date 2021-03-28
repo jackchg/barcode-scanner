@@ -8,9 +8,9 @@ import java.util.List;
 public class Singleton {
   private static Singleton instance = new Singleton();
   static String TAG;
-  static String FILENAME_FORMAT;
-  static int REQUEST_CODE_PERMISSIONS;
-  static String[] REQUIRED_PERMISSIONS;
+  String FILENAME_FORMAT;
+  int REQUEST_CODE_PERMISSIONS;
+  String[] REQUIRED_PERMISSIONS;
 
   private
   Singleton ()
@@ -18,14 +18,14 @@ public class Singleton {
     TAG = "CameraXBasic";
     FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
     REQUEST_CODE_PERMISSIONS = 10;
-    REQUIRED_PERMISSIONS =
-            Arrays.asList(Manifest.permission.CAMERA).toArray(new String[0]);
+    REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
   }
 
   public static Singleton getInstance () { return instance; }
-  public static String[] getReqPerms () { return REQUIRED_PERMISSIONS; }
-  public static int getReqCodePerms () { return REQUEST_CODE_PERMISSIONS; }
-  public static String getFilenameFormat () { return FILENAME_FORMAT; }
+  public String[] getReqPerms () { return REQUIRED_PERMISSIONS; }
+  public int getReqCodePerms () { return REQUEST_CODE_PERMISSIONS; }
+  public String getTag () { return TAG; }
+  public String getFilenameFormat () { return FILENAME_FORMAT; }
 
 
 }

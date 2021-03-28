@@ -1,17 +1,26 @@
 package com.example.barcode_scanner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,6 +56,7 @@ MainActivity extends AppCompatActivity
         ActivityCompat.requestPermissions (this,
                                           singleton.getReqPerms(),
                                           singleton.getReqCodePerms());
+
       }
 
     // Set up the listener for the take photo button
@@ -84,6 +94,52 @@ MainActivity extends AppCompatActivity
                                  "Starting Camera",
                                  Toast.LENGTH_SHORT);
     toast.show();
+
+    ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+        ProcessCameraProvider.getInstance (this);
+
+    // This may not work
+    LifecycleOwner lifecycleOwner = this;
+    cameraProviderFuture.addListener (new Runnable ()
+    {
+      @Override
+      public void run () {
+        // Used to bind the lifecycle of cameras to the lifecycle owner
+        ProcessCameraProvider cameraProvider = null;
+        try
+          {
+            cameraProvider = cameraProviderFuture.get ();
+          }
+        catch (ExecutionException | InterruptedException exception)
+          {
+            exception.printStackTrace ();
+          }
+
+        // Preview
+        PreviewView viewFinder = findViewById(R.id.viewFinder);
+        Preview preview = new Preview.Builder().build();
+        preview.setSurfaceProvider(viewFinder.createSurfaceProvider());
+
+        // Select back camera as a default
+        CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+        try {
+          // Unbind use cases before rebinding
+          cameraProvider.unbindAll();
+
+          // Bind use cases to camera
+          cameraProvider.bindToLifecycle(lifecycleOwner,
+                                         cameraSelector,
+                                         preview);
+        } catch (Exception exception) {
+          Log.e(singleton.getTag(),
+              "Use case binding failed",
+              exception);
+        }
+      }
+
+    }, ContextCompat.getMainExecutor (this));
+
   }
 
   private void
@@ -100,6 +156,7 @@ MainActivity extends AppCompatActivity
   {
     String appName = getResources().getString(R.string.app_name);
     File[] mediaDirs = getExternalMediaDirs();
+    if (mediaDirs == null) return null;
     for (File mediaDir: mediaDirs)
       {
         // Not sure if this actually works
@@ -120,5 +177,27 @@ MainActivity extends AppCompatActivity
   {
     super.onDestroy();
     cameraExecutor.shutdown();
+  }
+
+  @Override
+  public void
+  onRequestPermissionsResult (int requestCode,
+                              String[] permissions,
+                              int[] grantResults)
+  {
+    if (requestCode == singleton.getReqCodePerms ())
+      {
+        if (allPermissionsGranted ())
+          {
+            startCamera();
+          }
+        else
+          {
+            Toast.makeText (this,
+                            "Permissions not granted by the user.",
+                            Toast.LENGTH_SHORT).show();
+            finish();
+          }
+      }
   }
 }

@@ -3,7 +3,7 @@
     package="com.example.barcode_scanner">
 
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="andorid.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
