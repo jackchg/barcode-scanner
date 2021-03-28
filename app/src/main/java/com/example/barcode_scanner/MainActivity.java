@@ -51,7 +51,11 @@ MainActivity extends AppCompatActivity
 {
   /* Most code taken from
    * https://codelabs.developers.google.com/codelabs/camerax-getting-started#1
-   * but translated somewhat into Java
+   * but translated into Java to the best possible extent.
+   *
+   * Barcode analyzer code taken from
+   * https://developers.google.com/ml-kit/vision/barcode-scanning
+   * to obtain barcode values.
    */
   private Singleton singleton = Singleton.getInstance();
 
@@ -83,9 +87,12 @@ MainActivity extends AppCompatActivity
 
     // Set up the listener for the take photo button
     Button cameraCaptureButton = findViewById (R.id.camera_capture_button);
-    cameraCaptureButton.setOnClickListener(new View.OnClickListener() {
+    cameraCaptureButton.setOnClickListener(new View.OnClickListener ()
+    {
       @Override
-      public void onClick(View view) {
+      public void
+      onClick (View view)
+      {
         takePhoto ();
       }
     });

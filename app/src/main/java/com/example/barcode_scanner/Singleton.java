@@ -28,7 +28,14 @@ public class Singleton {
   public int getReqCodePerms () { return REQUEST_CODE_PERMISSIONS; }
   public String getTag () { return TAG; }
   public String getFilenameFormat () { return FILENAME_FORMAT; }
-  public void setBarcode (String barcode) { this.barcode = barcode; System.out.println(barcode); }
+
+  public void setBarcode (String barcode)
+  {
+    if (barcode != this.barcode)
+      {
+        this.barcode = barcode;
+      }
+  }
 
 
 }
