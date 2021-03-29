@@ -31,14 +31,15 @@ public class Product {
            String name,
            Float price,
            Boolean taxed,
-           Boolean crv)
+           Boolean crv,
+           String notes)
   {
     this.barcode = barcode;
     this.name = name;
     this.price = price;
     this.taxed = taxed;
     this.crv = crv;
-    this.notes = "";
+    this.notes = notes;
   }
 
   /**
@@ -66,7 +67,9 @@ public class Product {
   public Float getPrice () { return price; }
   public Boolean isTaxed () { return taxed; }
   public Boolean isCrv () { return crv; }
+  public String getNotes () { return notes; }
   public Long getTimestamp () { return timestamp; }
+  public Integer getId () { return _id; }
 
   public void setBarcode (String barcode) { this.barcode = barcode; }
   public void setName (String name) { this.name = name; }

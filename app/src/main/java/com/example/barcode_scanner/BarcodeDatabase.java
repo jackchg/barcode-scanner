@@ -12,7 +12,7 @@ public class BarcodeDatabase
                                                 + "AND name='barcodes';";
   private static final String CREATE_BARCODES_TABLE =
       "CREATE TABLE barcodes ("
-      + " barcode TEXT, "
+      + " barcode TEXT UNIQUE, "
       + " name TEXT, "
       + " price REAL, "
       + " taxed INTEGER, "
@@ -21,6 +21,8 @@ public class BarcodeDatabase
       + " timestamp INTEGER, "
       + " _id INTEGER PRIMARY KEY AUTOINCREMENT"
       + " );";
+
+
 
   /*
    * Database Columns:
@@ -73,7 +75,7 @@ public class BarcodeDatabase
     SQLiteDatabase database = singleton.getBarcodeDatabase();
     Product product = null;
 
-    String queryString = "SELECT FROM barcodes WHERE barcode=\""
+    String queryString = "SELECT * FROM barcodes WHERE barcode=\""
                          + barcode
                          + "\";";
     Cursor cursor;
@@ -89,6 +91,25 @@ public class BarcodeDatabase
   public static void
   addProduct (Product product)
   {
+    Long timestamp = System.currentTimeMillis ();
+    Integer taxed = product.isTaxed () ? 1 : 0;
+    Integer crv = product.isCrv () ? 1 : 0;
 
+    /* Using a REPLACE because barcodes should be unique
+     * across all products.  */
+    String replaceString = "REPLACE INTO barcodes VALUES ("
+                          + "\"" + product.getBarcode () + "\""    + ", "
+                          + "\"" + product.getName () + "\""       + ", "
+                          +        product.getPrice ().toString () + ", "
+                          +        taxed.toString ()               + ", "
+                          +        crv.toString ()                 + ", "
+                          + "\"" + product.getNotes () + "\""      + ", "
+                          +        timestamp.toString ()           + ", "
+                          + "NULL);";
+
+    /* Insert the data into the barcodes database.  */
+    Singleton singleton = Singleton.getInstance();
+    SQLiteDatabase database = singleton.getBarcodeDatabase ();
+    database.execSQL (replaceString);
   }
 }

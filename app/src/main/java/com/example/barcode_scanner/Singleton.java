@@ -46,7 +46,8 @@ public class Singleton
   public File getOutputDirectory () { return outputDirectory; }
   public void setActivity (Activity activity) { this.activity = activity; }
 
-  public ExecutorService getCameraExecutor ()
+  public ExecutorService
+  getCameraExecutor ()
   {
     if (cameraExecutor != null)
       {
@@ -58,7 +59,8 @@ public class Singleton
     return cameraExecutor;
   }
 
-  public SQLiteDatabase getBarcodeDatabase ()
+  public SQLiteDatabase
+  getBarcodeDatabase ()
   {
     if (barcodeDatabase == null)
       {
@@ -67,12 +69,15 @@ public class Singleton
     return barcodeDatabase;
   }
 
-  public void setOutputDirectory (File outputDirectory)
+  public void
+  setOutputDirectory (File outputDirectory)
   {
     this.outputDirectory = outputDirectory;
   }
 
-  public void setProduct (String barcode)
+  /* Overloaded setProduct.  */
+  public void
+  setProduct (String barcode)
   {
     if (barcode != this.barcode)
       {
@@ -81,4 +86,5 @@ public class Singleton
         product = BarcodeDatabase.getProduct (barcode);
       }
   }
+  public void setProduct (Product product) { this.product = product; }
 }
