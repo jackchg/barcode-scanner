@@ -22,8 +22,6 @@ public class BarcodeDatabase
       + " _id INTEGER PRIMARY KEY AUTOINCREMENT"
       + " );";
 
-
-
   /*
    * Database Columns:
    * barcode TEXT | name TEXT | price REAL | taxed INTEGER | crv INTEGER |
