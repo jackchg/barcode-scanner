@@ -15,6 +15,7 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
@@ -71,6 +72,7 @@ MainActivity extends AppCompatActivity
     if (Permissions.allPermissionsGranted ())
       {
         Camera.startCamera ();
+        System.out.println("Starting camera");
       }
     else
       {
@@ -88,6 +90,27 @@ MainActivity extends AppCompatActivity
         Camera.takePhoto ();
       }
     });
+
+    Button editProductButton = findViewById (R.id.editProductButton);
+    editProductButton.setOnClickListener (new View.OnClickListener ()
+    {
+      @Override
+      public void
+      onClick (View view)
+      {
+        Intent intent = new Intent (view.getContext(),
+                                    EditProductActivity.class);
+        startActivity (intent);
+      }
+    });
+  }
+
+  @Override
+  protected void
+  onResume ()
+  {
+    super.onResume ();
+    singleton.setActivity (this);
   }
 
   private File

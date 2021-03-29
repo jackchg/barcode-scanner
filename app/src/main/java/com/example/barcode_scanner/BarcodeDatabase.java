@@ -79,4 +79,10 @@ public class BarcodeDatabase
       }
     return product;
   }
+
+  public static void
+  addProduct (Product product)
+  {
+
+  }
 }

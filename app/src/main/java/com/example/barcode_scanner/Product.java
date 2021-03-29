@@ -28,7 +28,7 @@ public class Product {
 
   /**
    * Creates a product from the cursor that should point at a line in the
-   * barcodes table. Undefined behavior if the cursor is not pointer at
+   * barcodes table. Undefined behavior if the cursor is not pointing at
    * a line in the barcodes table.
    * @param cursor Cursor object that should point at a line in the
    *               barcodes table.
@@ -47,7 +47,7 @@ public class Product {
 
   public String getBarcode () { return barcode; }
   public String getName () { return name; }
-  public Float getPrice () { return price; };
+  public Float getPrice () { return price; }
   public Boolean isTaxed () { return taxed; }
   public Boolean isCrv () { return crv; }
 

@@ -25,8 +25,6 @@ import java.util.List;
 public class
 BarcodeAnalyzer implements ImageAnalysis.Analyzer
 {
-  private static Singleton singleton = Singleton.getInstance();
-
   public
   BarcodeAnalyzer ()
   {
@@ -36,6 +34,7 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
   @ExperimentalGetImage
   public void analyze (ImageProxy imageProxy)
   {
+    Singleton singleton = Singleton.getInstance ();
     Image mediaImage = imageProxy.getImage ();
     if (mediaImage != null)
     {
@@ -55,11 +54,14 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
                 // Rect bounds = barcode.getBoundingBox ();
                 // Point[] corners = barcode.getCornerPoints ();
 
-                String rawValue = barcode.getRawValue ();
-                singleton.setBarcode (rawValue);
+                String barcodeString = barcode.getRawValue ();
+                // singleton.setProduct (barcodeString);
                 Activity activity = singleton.getActivity();
                 TextView priceText = activity.findViewById (R.id.priceText);
-                priceText.setText (rawValue);
+                if (priceText != null)
+                  {
+                    priceText.setText (barcodeString);
+                  }
               }
             }
           })

@@ -25,6 +25,7 @@ public class Singleton
 
   private SQLiteDatabase barcodeDatabase;
   String barcode;
+  Product product;
 
   private
   Singleton ()
@@ -33,8 +34,7 @@ public class Singleton
     FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
     REQUEST_CODE_PERMISSIONS = 10;
     REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
-    cameraExecutor = Executors.newSingleThreadExecutor();
-
+    cameraExecutor = null;
   }
 
   public static Singleton getInstance () { return instance; }
@@ -44,8 +44,19 @@ public class Singleton
   public String getFilenameFormat () { return FILENAME_FORMAT; }
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
-  public ExecutorService getCameraExecutor () { return cameraExecutor; }
   public void setActivity (Activity activity) { this.activity = activity; }
+
+  public ExecutorService getCameraExecutor ()
+  {
+    if (cameraExecutor != null)
+      {
+        cameraExecutor.shutdown();
+      }
+    /* Need to create a new camera executor because the activity is recreated
+     * when switching orientation.  */
+    cameraExecutor = Executors.newSingleThreadExecutor();
+    return cameraExecutor;
+  }
 
   public SQLiteDatabase getBarcodeDatabase ()
   {
@@ -61,11 +72,13 @@ public class Singleton
     this.outputDirectory = outputDirectory;
   }
 
-  public void setBarcode (String barcode)
+  public void setProduct (String barcode)
   {
     if (barcode != this.barcode)
       {
+        /* Need to query the barcode database for new product.  */
         this.barcode = barcode;
+        product = BarcodeDatabase.getProduct (barcode);
       }
   }
 }
