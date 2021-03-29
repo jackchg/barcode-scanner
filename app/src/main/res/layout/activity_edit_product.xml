@@ -19,11 +19,11 @@
                 android:gravity="center_vertical"
                 android:text="Barcode: " />
             <EditText
+                android:id="@+id/barcodeEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:inputType="number"
-                android:text="BarcodeString" />
+                android:inputType="number" />
         </TableRow>
         <TableRow >
             <TextView
@@ -32,10 +32,10 @@
                 android:gravity="center_vertical"
                 android:text="Name:" />
             <EditText
+                android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Name " />
+                android:layout_weight="1" />
         </TableRow>
         <TableRow >
             <TextView
@@ -44,11 +44,11 @@
                 android:gravity="center_vertical"
                 android:text="Price: " />
             <EditText
+                android:id="@+id/priceEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
-                android:text="12.3" />
+                android:inputType="numberDecimal" />
         </TableRow>
     </TableLayout>
 
@@ -62,6 +62,7 @@
             android:layout_weight="1"
             android:gravity="center">
             <CheckBox
+                android:id="@+id/taxedCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+Tax" />
@@ -72,6 +73,7 @@
             android:layout_weight="1"
             android:gravity="center" >
             <CheckBox
+                android:id="@+id/crvCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+CRV" />
@@ -86,6 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp" >
         <EditText
+            android:id="@+id/notesEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -97,17 +100,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
         <Button
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginRight="5dp"
             android:text="Save" />
         <Button
+            android:id="@+id/resetButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
-            android:text="Cancel" />
+            android:text="Reset" />
     </LinearLayout>
 
 </LinearLayout>

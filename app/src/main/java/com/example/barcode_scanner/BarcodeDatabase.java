@@ -18,13 +18,19 @@ public class BarcodeDatabase
       + " taxed INTEGER, "
       + " crv INTEGER, "
       + " notes TEXT, "
+      + " timestamp INTEGER, "
       + " _id INTEGER PRIMARY KEY AUTOINCREMENT"
       + " );";
 
   /*
    * Database Columns:
-   * barcode TEXT | name TEXT | price REAL | taxed INTEGER |
-   * crv INTEGER | notes TEXT | _id INTEGER PRIMARY KEY AUTOINCREMENT
+   * barcode TEXT | name TEXT | price REAL | taxed INTEGER | crv INTEGER |
+   * notes TEXT | timestamp INTEGER | _id INTEGER PRIMARY KEY AUTOINCREMENT
+   *
+   * a.k.a.
+   *
+   * barcode String | name String | price Float | taxed Boolean | crv Boolean |
+   * notes String | timestamp Long | _id Integer
    *
    * Note: Changing the barcode table requires changing the Product.java class.
    */
