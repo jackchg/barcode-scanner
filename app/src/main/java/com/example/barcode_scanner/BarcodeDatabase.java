@@ -62,7 +62,7 @@ public class BarcodeDatabase
 
   /**
    * Returns for a given barcode string in a Product object, or null
-   * if the barcode does not have an associated product.
+   * if the barcode does not have an associated Product object.
    * @param barcode Barcode text obtained the raw value of a barcode object.
    * @return Newly created Product object with the provided barcode, or null.
    */

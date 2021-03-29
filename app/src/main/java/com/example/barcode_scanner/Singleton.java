@@ -44,6 +44,7 @@ public class Singleton
   public String getFilenameFormat () { return FILENAME_FORMAT; }
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
+  public Product getProduct () { return product; }
   public void setActivity (Activity activity) { this.activity = activity; }
 
   public ExecutorService
@@ -75,16 +76,5 @@ public class Singleton
     this.outputDirectory = outputDirectory;
   }
 
-  /* Overloaded setProduct.  */
-  public void
-  setProduct (String barcode)
-  {
-    if (barcode != this.barcode)
-      {
-        /* Need to query the barcode database for new product.  */
-        this.barcode = barcode;
-        product = BarcodeDatabase.getProduct (barcode);
-      }
-  }
   public void setProduct (Product product) { this.product = product; }
 }

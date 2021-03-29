@@ -62,7 +62,7 @@ ScanningActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        Intent intent = new Intent (view.getContext(),
+        Intent intent = new Intent (view.getContext (),
                                     EditProductActivity.class);
         startActivity (intent);
       }
@@ -93,24 +93,15 @@ ScanningActivity extends AppCompatActivity
     active = false;
   }
 
-  private File
-  getOutputDirectory ()
+  @Override
+  public void
+  onRequestPermissionsResult (int requestCode,
+                              String[] permissions,
+                              int[] grantResults)
   {
-    String appName = getResources().getString(R.string.app_name);
-    File[] mediaDirs = getExternalMediaDirs();
-    if (mediaDirs == null) return null;
-    for (File mediaDir: mediaDirs)
-      {
-        // Not sure if this actually works
-        File newFile = new File (mediaDir, appName);
-        newFile.mkdirs ();
-      }
-    File mediaDir = null;
-    if (mediaDirs.length > 0)
-      {
-        mediaDir = mediaDirs[0];
-      }
-    return mediaDir;
+    Permissions.onRequestPermissionsResult (requestCode,
+            permissions,
+            grantResults);
   }
 
   @Override
@@ -122,14 +113,33 @@ ScanningActivity extends AppCompatActivity
     cameraExecutor.shutdown ();
   }
 
-  @Override
-  public void
-  onRequestPermissionsResult (int requestCode,
-                              String[] permissions,
-                              int[] grantResults)
+
+  private File
+  getOutputDirectory ()
   {
-    Permissions.onRequestPermissionsResult (requestCode,
-                                            permissions,
-                                            grantResults);
+    String appName = getResources().getString(R.string.app_name);
+    File[] mediaDirs = getExternalMediaDirs();
+    if (mediaDirs == null) return null;
+    for (File mediaDir: mediaDirs)
+    {
+      // Not sure if this actually works
+      File newFile = new File (mediaDir, appName);
+      newFile.mkdirs ();
+    }
+    File mediaDir = null;
+    if (mediaDirs.length > 0)
+    {
+      mediaDir = mediaDirs[0];
+    }
+    return mediaDir;
+  }
+
+  public static void
+  fillProductInformation ()
+  {
+    Singleton singleton = Singleton.getInstance();
+    Product product = singleton.getProduct ();
+    // TODO: Fill product information if not null
+    // TODO: If null, hide priceInformation and show noPriceInformation
   }
 }

@@ -61,10 +61,13 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
                 {
                   /* Populate the scanning activity.  */
                   Activity activity = singleton.getActivity ();
+                  ScanningActivity.fillProductInformation ();
+                  /*
                   TextView barcodeText =
                           activity.findViewById (R.id.barcodeText);
                   String text = "Barcode: " + barcodeString;
                   barcodeText.setText (text);
+                  */
                 }
               }
             }
