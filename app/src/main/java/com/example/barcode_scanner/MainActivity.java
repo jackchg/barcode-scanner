@@ -72,7 +72,6 @@ MainActivity extends AppCompatActivity
     if (Permissions.allPermissionsGranted ())
       {
         Camera.startCamera ();
-        System.out.println("Starting camera");
       }
     else
       {

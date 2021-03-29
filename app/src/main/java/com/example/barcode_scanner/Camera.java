@@ -52,10 +52,6 @@ public class Camera {
     Singleton singleton = Singleton.getInstance();
     ExecutorService cameraExecutor = singleton.getCameraExecutor();
     Activity activity = singleton.getActivity();
-    Toast toast = Toast.makeText(activity,
-                            "Starting Camera",
-                                 Toast.LENGTH_SHORT);
-    toast.show();
 
     ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
         ProcessCameraProvider.getInstance (activity);
