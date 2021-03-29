@@ -1,40 +1,24 @@
 package com.example.barcode_scanner;
 
 import android.app.Activity;
-import android.media.Image;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.camera.camera2.internal.annotation.CameraExecutor;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
-import androidx.camera.core.ImageInfo;
-import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.mlkit.vision.barcode.Barcode;
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-import com.google.mlkit.vision.barcode.BarcodeScanning;
-import com.google.mlkit.vision.common.InputImage;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;

@@ -5,18 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".ScanningActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
         <Button
-            android:id="@+id/camera_capture_button"
+            android:id="@+id/cameraCaptureButton"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:text="Take Photo"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="center"/>
 
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"
@@ -53,20 +53,15 @@
                     android:id="@+id/plusTaxText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:text="+TAX"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/plusNonTaxText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="+NON-TAX"
                     android:textSize="25sp" />
 
                 <TextView
                     android:id="@+id/plusCrvText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:text="+CRV"
                     android:textSize="25sp" />
             </LinearLayout>

@@ -55,17 +55,19 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
                 // Point[] corners = barcode.getCornerPoints ();
 
                 String barcodeString = barcode.getRawValue ();
-                // singleton.setProduct (barcodeString);
-                Activity activity = singleton.getActivity();
-                TextView priceText = activity.findViewById (R.id.priceText);
-                if (priceText != null)
-                  {
-                    priceText.setText (barcodeString);
-                  }
+                Product product = BarcodeDatabase.getProduct (barcodeString);
+                singleton.setProduct (product);
+                if (ScanningActivity.active)
+                {
+                  /* Populate the scanning activity.  */
+                  Activity activity = singleton.getActivity();
+                  TextView priceText = activity.findViewById(R.id.priceText);
+                  priceText.setText(barcodeString);
+                }
               }
             }
           })
-          .addOnFailureListener(new OnFailureListener()
+          .addOnFailureListener(new OnFailureListener ()
           {
             @Override
             public void onFailure(@NonNull Exception e)
