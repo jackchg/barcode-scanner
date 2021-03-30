@@ -35,6 +35,7 @@ public class Singleton
     REQUEST_CODE_PERMISSIONS = 10;
     REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
     cameraExecutor = null;
+    barcode = "";
   }
 
   public static Singleton getInstance () { return instance; }
@@ -44,7 +45,15 @@ public class Singleton
   public String getFilenameFormat () { return FILENAME_FORMAT; }
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
+
+  /**
+   * Returns the Product object currently referenced by the barcode scanner, or
+   * null if there is no Product object for that barcode or no barcode being
+   * scanned.
+   * @return The Product object for a barcode, or null.
+   */
   public Product getProduct () { return product; }
+  public String getBarcode () { return barcode; }
   public void setActivity (Activity activity) { this.activity = activity; }
 
   public ExecutorService
@@ -77,4 +86,5 @@ public class Singleton
   }
 
   public void setProduct (Product product) { this.product = product; }
+  public void setBarcode (String barcode) { this.barcode = barcode; }
 }

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -134,12 +136,64 @@ ScanningActivity extends AppCompatActivity
     return mediaDir;
   }
 
-  public static void
+  public void
   fillProductInformation ()
   {
-    Singleton singleton = Singleton.getInstance();
     Product product = singleton.getProduct ();
-    // TODO: Fill product information if not null
-    // TODO: If null, hide priceInformation and show noPriceInformation
+    TextView barcodeText = findViewById (R.id.barcodeText);
+    TextView nameText = findViewById (R.id.nameText);
+    TextView priceText = findViewById (R.id.priceText);
+    TextView plusTaxText = findViewById (R.id.plusTaxText);
+    TextView plusCrvText = findViewById (R.id.plusCrvText);
+    TextView notesText = findViewById (R.id.notesText);
+    if (product != null)
+      {
+        /* Product exists in the database, so populate the activity.  */
+        String barcode = product.getBarcode ();
+        barcodeText.setText (barcode);
+
+        String name = product.getName ();
+        nameText.setText (name);
+
+        String price = product.getPrice ().toString ();
+        priceText.setText (price);
+
+        if (product.isTaxed ())
+          {
+            plusTaxText.setVisibility (View.VISIBLE);
+          }
+        else
+          {
+            plusTaxText.setVisibility (View.INVISIBLE);
+          }
+
+        if (product.isCrv ())
+          {
+            plusCrvText.setVisibility (View.VISIBLE);
+          }
+        else
+          {
+            plusCrvText.setVisibility (View.INVISIBLE);
+          }
+
+        String notes = product.getNotes ();
+        notesText.setText (notes);
+      }
+    else
+      {
+        String barcode = singleton.getBarcode ();
+        String text = "Barcode: " + barcode;
+        barcodeText.setText (text);
+
+        nameText.setText ("Name :");
+
+        priceText.setText ("No available price information.");
+
+        plusTaxText.setVisibility (View.INVISIBLE);
+
+        plusCrvText.setVisibility (View.INVISIBLE);
+
+        notesText.setText ("");
+      }
   }
 }
