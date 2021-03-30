@@ -52,7 +52,7 @@ public class Product {
   public
   Product (Cursor cursor)
   {
-    barcode = cursor.getString (Column.BARCODE.ordinal());
+    barcode = cursor.getString (0);
     name = cursor.getString (Column.NAME.ordinal());
     price = cursor.getFloat (Column.PRICE.ordinal());
     taxed = cursor.getInt (Column.TAXED.ordinal()) == 1;

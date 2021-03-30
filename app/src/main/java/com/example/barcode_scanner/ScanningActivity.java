@@ -150,13 +150,16 @@ ScanningActivity extends AppCompatActivity
       {
         /* Product exists in the database, so populate the activity.  */
         String barcode = product.getBarcode ();
-        barcodeText.setText (barcode);
+        String bText = "Barcode: " + barcode;
+        barcodeText.setText (bText);
 
         String name = product.getName ();
-        nameText.setText (name);
+        String nText = "Name: " + name;
+        nameText.setText (nText);
 
         String price = product.getPrice ().toString ();
-        priceText.setText (price);
+        String pText = '$' + price;
+        priceText.setText (pText);
 
         if (product.isTaxed ())
           {

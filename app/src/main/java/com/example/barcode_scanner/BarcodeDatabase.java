@@ -81,6 +81,7 @@ public class BarcodeDatabase
     if (cursor.getCount () != 0)
       {
         /* Product exists so create a new Product object.  */
+        cursor.moveToFirst ();
         product = new Product (cursor);
       }
     return product;
