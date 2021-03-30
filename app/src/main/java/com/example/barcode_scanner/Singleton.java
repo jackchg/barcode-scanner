@@ -25,6 +25,7 @@ public class Singleton
 
   private SQLiteDatabase barcodeDatabase;
   String barcode;
+  Product product;
 
   private
   Singleton ()
@@ -33,8 +34,8 @@ public class Singleton
     FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS";
     REQUEST_CODE_PERMISSIONS = 10;
     REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
-    cameraExecutor = Executors.newSingleThreadExecutor();
-
+    cameraExecutor = null;
+    barcode = "";
   }
 
   public static Singleton getInstance () { return instance; }
@@ -44,10 +45,32 @@ public class Singleton
   public String getFilenameFormat () { return FILENAME_FORMAT; }
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
-  public ExecutorService getCameraExecutor () { return cameraExecutor; }
+
+  /**
+   * Returns the Product object currently referenced by the barcode scanner, or
+   * null if there is no Product object for that barcode or no barcode being
+   * scanned.
+   * @return The Product object for a barcode, or null.
+   */
+  public Product getProduct () { return product; }
+  public String getBarcode () { return barcode; }
   public void setActivity (Activity activity) { this.activity = activity; }
 
-  public SQLiteDatabase getBarcodeDatabase ()
+  public ExecutorService
+  getCameraExecutor ()
+  {
+    if (cameraExecutor != null)
+      {
+        cameraExecutor.shutdown();
+      }
+    /* Need to create a new camera executor because the activity is recreated
+     * when switching orientation.  */
+    cameraExecutor = Executors.newSingleThreadExecutor();
+    return cameraExecutor;
+  }
+
+  public SQLiteDatabase
+  getBarcodeDatabase ()
   {
     if (barcodeDatabase == null)
       {
@@ -56,16 +79,12 @@ public class Singleton
     return barcodeDatabase;
   }
 
-  public void setOutputDirectory (File outputDirectory)
+  public void
+  setOutputDirectory (File outputDirectory)
   {
     this.outputDirectory = outputDirectory;
   }
 
-  public void setBarcode (String barcode)
-  {
-    if (barcode != this.barcode)
-      {
-        this.barcode = barcode;
-      }
-  }
+  public void setProduct (Product product) { this.product = product; }
+  public void setBarcode (String barcode) { this.barcode = barcode; }
 }

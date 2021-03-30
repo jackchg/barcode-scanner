@@ -25,8 +25,6 @@ import java.util.List;
 public class
 BarcodeAnalyzer implements ImageAnalysis.Analyzer
 {
-  private static Singleton singleton = Singleton.getInstance();
-
   public
   BarcodeAnalyzer ()
   {
@@ -36,6 +34,7 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
   @ExperimentalGetImage
   public void analyze (ImageProxy imageProxy)
   {
+    Singleton singleton = Singleton.getInstance ();
     Image mediaImage = imageProxy.getImage ();
     if (mediaImage != null)
     {
@@ -48,25 +47,31 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
           .addOnSuccessListener(new OnSuccessListener<List<Barcode>>()
           {
             @Override
-            public void onSuccess(List<Barcode> barcodes)
+            public void onSuccess (List<Barcode> barcodes)
             {
               for (Barcode barcode: barcodes)
               {
                 // Rect bounds = barcode.getBoundingBox ();
                 // Point[] corners = barcode.getCornerPoints ();
 
-                String rawValue = barcode.getRawValue ();
-                singleton.setBarcode (rawValue);
-                Activity activity = singleton.getActivity();
-                TextView priceText = activity.findViewById (R.id.priceText);
-                priceText.setText (rawValue);
+                String barcodeString = barcode.getRawValue ();
+                Product product = BarcodeDatabase.getProduct (barcodeString);
+                singleton.setProduct (product);
+                singleton.setBarcode (barcodeString);
+                if (ScanningActivity.active)
+                  {
+                    /* Populate the scanning activity.  */
+                    ScanningActivity activity =
+                            (ScanningActivity) singleton.getActivity ();
+                    activity.fillProductInformation ();
+                  }
               }
             }
           })
-          .addOnFailureListener(new OnFailureListener()
+          .addOnFailureListener (new OnFailureListener ()
           {
             @Override
-            public void onFailure(@NonNull Exception e)
+            public void onFailure (@NonNull Exception e)
             {
               Activity activity = singleton.getActivity();
               Toast toast = Toast.makeText (activity,
@@ -75,12 +80,12 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
               toast.show ();
             }
           })
-          .addOnCompleteListener(new OnCompleteListener<List<Barcode>>()
+          .addOnCompleteListener (new OnCompleteListener<List<Barcode>> ()
           {
             @Override
-            public void onComplete(@NonNull Task<List<Barcode>> task)
+            public void onComplete (@NonNull Task<List<Barcode>> task)
             {
-              imageProxy.close();
+              imageProxy.close ();
             }
           });
     }
