@@ -39,7 +39,7 @@ public class EditProductActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        // TODO: Reset product values to original, should be stored in singleton
+        fillEditProductActivity();
       }
     });
   }
@@ -50,6 +50,45 @@ public class EditProductActivity extends AppCompatActivity
   {
     super.onResume ();
     singleton.setActivity (this);
+    fillEditProductActivity();
+  }
+
+  private void
+  fillEditProductActivity ()
+  {
+    Product product = singleton.getProduct ();
+    EditText barcodeEditText = findViewById (R.id.barcodeEditText);
+    String barcode;
+    if (product == null)
+      {
+        barcode = singleton.getBarcode ();
+        barcodeEditText.setText (barcode);
+        return;
+      }
+
+    barcode = product.getBarcode ();
+    barcodeEditText.setText (barcode);
+
+    EditText nameEditText = findViewById (R.id.nameEditText);
+    String name = product.getName ();
+    nameEditText.setText (name);
+
+    EditText priceEditText = findViewById (R.id.priceEditText);
+    Float price = product.getPrice ();
+    String priceString = price.toString ();
+    priceEditText.setText (priceString);
+
+    CheckBox taxedCheckBox = findViewById (R.id.taxedCheckBox);
+    Boolean taxed = product.isTaxed ();
+    taxedCheckBox.setChecked (taxed);
+
+    CheckBox crvCheckBox = findViewById (R.id.crvCheckBox);
+    Boolean crv = product.isCrv ();
+    crvCheckBox.setChecked (crv);
+
+    EditText notesEditText = findViewById (R.id.notesEditText);
+    String notes = product.getNotes ();
+    notesEditText.setText (notes);
   }
 
   private Product
