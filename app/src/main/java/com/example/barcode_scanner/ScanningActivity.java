@@ -73,21 +73,15 @@ ScanningActivity extends AppCompatActivity
 
   @Override
   protected void
-  onStart ()
-  {
-    super.onStart ();
-    active = true;
-  }
-
-  @Override
-  protected void
   onResume ()
   {
     super.onResume ();
     singleton.setActivity (this);
+    active = true;
   }
 
   // May not need onStop, may only need onPause to change active to false
+  /*
   @Override
   protected void
   onStop ()
@@ -95,6 +89,7 @@ ScanningActivity extends AppCompatActivity
     super.onStop ();
     active = false;
   }
+   */
 
   @Override
   protected void

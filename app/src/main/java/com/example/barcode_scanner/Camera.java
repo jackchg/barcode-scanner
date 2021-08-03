@@ -85,7 +85,7 @@ public class Camera {
           cameraProvider.bindToLifecycle(lifecycleOwner,
                                          cameraSelector,
                                          preview,
-                                         imageCapture,
+                                         imageCapture, // Remove to decrease image resolution
                                          imageAnalyzer);
         } catch (Exception exception) {
           Log.e(singleton.getTag(),

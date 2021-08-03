@@ -20,11 +20,15 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 public class
 BarcodeAnalyzer implements ImageAnalysis.Analyzer
 {
+
   public
   BarcodeAnalyzer ()
   {
@@ -32,62 +36,127 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
 
   @Override
   @ExperimentalGetImage
-  public void analyze (ImageProxy imageProxy)
+  public void
+  analyze (ImageProxy imageProxy)
   {
     Singleton singleton = Singleton.getInstance ();
     Image mediaImage = imageProxy.getImage ();
     if (mediaImage != null)
-    {
-      ImageInfo imageInfo = imageProxy.getImageInfo();
-      InputImage image =
-          InputImage.fromMediaImage(mediaImage,
-              imageInfo.getRotationDegrees());
-      BarcodeScanner scanner = BarcodeScanning.getClient ();
-      Task<List<Barcode>> result = scanner.process (image)
-          .addOnSuccessListener(new OnSuccessListener<List<Barcode>>()
-          {
-            @Override
-            public void onSuccess (List<Barcode> barcodes)
+      {
+        ImageInfo imageInfo = imageProxy.getImageInfo();
+        InputImage image =
+            InputImage.fromMediaImage(mediaImage,
+                imageInfo.getRotationDegrees());
+        BarcodeScanner scanner = BarcodeScanning.getClient ();
+        Task<List<Barcode>> result = scanner.process (image)
+            .addOnSuccessListener(new OnSuccessListener<List<Barcode>>()
             {
-              for (Barcode barcode: barcodes)
+              @Override
+              public void onSuccess (List<Barcode> barcodes)
               {
-                // Rect bounds = barcode.getBoundingBox ();
-                // Point[] corners = barcode.getCornerPoints ();
-
-                String barcodeString = barcode.getRawValue ();
-                Product product = BarcodeDatabase.getProduct (barcodeString);
-                singleton.setProduct (product);
-                singleton.setBarcode (barcodeString);
-                if (ScanningActivity.active)
-                  {
-                    /* Populate the scanning activity.  */
-                    ScanningActivity activity =
-                        (ScanningActivity) singleton.getActivity ();
-                    activity.fillProductInformation ();
-                  }
+                for (Barcode barcode: barcodes)
+                {
+                  // Rect bounds = barcode.getBoundingBox ();
+                  // Point[] corners = barcode.getCornerPoints ();
+                  String barcodeString = barcode.getRawValue ();
+                  obtainBarcodeInformation(barcodeString);
+                }
               }
-            }
-          })
-          .addOnFailureListener (new OnFailureListener ()
-          {
-            @Override
-            public void onFailure (@NonNull Exception e)
+            })
+            .addOnFailureListener (new OnFailureListener ()
             {
-              Activity activity = singleton.getActivity();
-              Toast toast = Toast.makeText (activity,
-                                       "Failed to recognize",
-                                            Toast.LENGTH_SHORT);
-              toast.show ();
-            }
-          })
-          .addOnCompleteListener (new OnCompleteListener<List<Barcode>> ()
-          {
-            @Override
-            public void onComplete (@NonNull Task<List<Barcode>> task)
+              @Override
+              public void onFailure (@NonNull Exception e)
+              {
+                Activity activity = singleton.getActivity();
+                Toast toast = Toast.makeText (activity,
+                                         "Failed to recognize",
+                                              Toast.LENGTH_SHORT);
+                toast.show ();
+              }
+            })
+            .addOnCompleteListener (new OnCompleteListener<List<Barcode>> ()
             {
-              imageProxy.close ();
-            }
-          });
-    }
+              @Override
+              public void onComplete (@NonNull Task<List<Barcode>> task)
+              {
+                imageProxy.close ();
+              }
+            });
+      }
+  }
+
+  /**
+   * Given a barcode value as a String, will add it to the queue of barcodes
+   * scanned in previous frames. When the queue is full (decided by
+   * BARCODE_QUEUE_LIMIT), the information for the most frequently occurring
+   * barcode will populating the ScanningActivity. Prevents stuttering from
+   * the MLKit Barcode Scanner library.
+   * @param barcodeString barcode literal value
+   */
+  private void
+  obtainBarcodeInformation (String barcodeString)
+  {
+    final int BARCODE_QUEUE_LIMIT = 30;
+    Singleton singleton = Singleton.getInstance ();
+    Queue<String> barcodeQueue = singleton.getBarcodeQueue();
+    barcodeQueue.add (barcodeString);
+    if (barcodeQueue.size() >= BARCODE_QUEUE_LIMIT)
+      {
+        String mostCommonBarcode = mostCommonBarcode ();
+        singleton.setBarcode (mostCommonBarcode);
+        Product product = BarcodeDatabase.getProduct (barcodeString);
+        singleton.setProduct (product);
+
+        if (ScanningActivity.active)
+        {
+          /* Populate the scanning activity.  */
+          ScanningActivity activity =
+              (ScanningActivity) singleton.getActivity ();
+          activity.fillProductInformation ();
+        }
+      }
+
+  }
+
+  private String
+  mostCommonBarcode ()
+  {
+    Singleton singleton = Singleton.getInstance ();
+    Queue<String> barcodeQueue = singleton.getBarcodeQueue ();
+    Map<String, Integer> barcodeFrequency = new HashMap<>();
+
+    while (!barcodeQueue.isEmpty ())
+      {
+        /* Sum up all occurrences of each barcode.  */
+        String barcode = barcodeQueue.remove ();
+
+        /* Set frequency to 0 if not yet in the map.  */
+        Integer frequency = barcodeFrequency.getOrDefault (barcode,
+                                                0);
+        barcodeFrequency.put (barcode, frequency + 1);
+      }
+
+    /* Identify most frequent barcode.  */
+    String mostFrequentBarcode = "";
+    Integer mostFrequentBarcodeValue = 0;
+    for (Map.Entry<String, Integer> entry: barcodeFrequency.entrySet ())
+      {
+        if (mostFrequentBarcode.isEmpty ())
+          {
+            mostFrequentBarcode = entry.getKey ();
+            mostFrequentBarcodeValue = entry.getValue ();
+          }
+        else
+          {
+            if (entry.getValue () > mostFrequentBarcodeValue)
+              {
+                mostFrequentBarcode = entry.getKey ();
+                mostFrequentBarcodeValue = entry.getValue ();
+              }
+          }
+      }
+
+    return mostFrequentBarcode;
   }
 }

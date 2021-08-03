@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.util.AbstractQueue;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +28,7 @@ public class Singleton
 
   private SQLiteDatabase barcodeDatabase;
   String barcode;
+  Queue<String> barcodeQueue;
   Product product;
 
   private
@@ -36,6 +40,7 @@ public class Singleton
     REQUIRED_PERMISSIONS = new String[] {Manifest.permission.CAMERA};
     cameraExecutor = null;
     barcode = "";
+    barcodeQueue = new LinkedList<>();
   }
 
   public static Singleton getInstance () { return instance; }
@@ -45,6 +50,7 @@ public class Singleton
   public String getFilenameFormat () { return FILENAME_FORMAT; }
   public Activity getActivity () { return activity; }
   public File getOutputDirectory () { return outputDirectory; }
+  public Queue<String> getBarcodeQueue () { return barcodeQueue; }
 
   /**
    * Returns the Product object currently referenced by the barcode scanner, or
