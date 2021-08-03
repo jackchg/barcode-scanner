@@ -87,11 +87,20 @@ ScanningActivity extends AppCompatActivity
     singleton.setActivity (this);
   }
 
+  // May not need onStop, may only need onPause to change active to false
   @Override
   protected void
   onStop ()
   {
     super.onStop ();
+    active = false;
+  }
+
+  @Override
+  protected void
+  onPause()
+  {
+    super.onPause();
     active = false;
   }
 

@@ -62,7 +62,7 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
                   {
                     /* Populate the scanning activity.  */
                     ScanningActivity activity =
-                            (ScanningActivity) singleton.getActivity ();
+                        (ScanningActivity) singleton.getActivity ();
                     activity.fillProductInformation ();
                   }
               }
