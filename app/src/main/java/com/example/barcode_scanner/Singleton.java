@@ -59,6 +59,7 @@ public class Singleton
    * @return The Product object for a barcode, or null.
    */
   public Product getProduct () { return product; }
+
   public String getBarcode () { return barcode; }
   public void setActivity (Activity activity) { this.activity = activity; }
 

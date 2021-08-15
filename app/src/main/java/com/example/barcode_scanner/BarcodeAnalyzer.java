@@ -92,7 +92,7 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
    * BARCODE_QUEUE_LIMIT), the information for the most frequently occurring
    * barcode will populating the ScanningActivity. Prevents stuttering from
    * the MLKit Barcode Scanner library.
-   * @param barcodeString barcode literal value
+   * @param barcodeString Barcode value as a String
    */
   private void
   obtainBarcodeInformation (String barcodeString)
@@ -109,16 +109,21 @@ BarcodeAnalyzer implements ImageAnalysis.Analyzer
         singleton.setProduct (product);
 
         if (ScanningActivity.active)
-        {
-          /* Populate the scanning activity.  */
-          ScanningActivity activity =
-              (ScanningActivity) singleton.getActivity ();
-          activity.fillProductInformation ();
+          {
+            /* Populate the scanning activity.  */
+            ScanningActivity activity =
+                (ScanningActivity) singleton.getActivity ();
+            activity.fillProductInformation ();
         }
       }
 
   }
 
+  /**
+   * Sets the product shown on ScanningActivity to the most often seen barcode,
+   * preventing the barcode from changing erratically with camera errors. Used
+   * in obtainBarcodeInformation().
+   */
   private String
   mostCommonBarcode ()
   {

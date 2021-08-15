@@ -80,7 +80,7 @@ public class BarcodeDatabase
     cursor = database.rawQuery (queryString, null);
     if (cursor.getCount () != 0)
       {
-        /* Product exists so create a new Product object.  */
+        /* Product exists so fill new Product object with database info.  */
         cursor.moveToFirst ();
         product = new Product (cursor);
       }
