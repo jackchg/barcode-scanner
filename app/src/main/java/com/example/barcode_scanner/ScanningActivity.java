@@ -163,7 +163,6 @@ ScanningActivity extends AppCompatActivity
         nameText.setText (nText);
 
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        // String price = product.getPrice ().toString ();
         String price = formatter.format (product.getPrice ());
         String pText = price;
         priceText.setText (pText);
