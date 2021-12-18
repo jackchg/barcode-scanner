@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
 
 public class
@@ -161,8 +162,10 @@ ScanningActivity extends AppCompatActivity
         String nText = "Name: " + name;
         nameText.setText (nText);
 
-        String price = product.getPrice ().toString ();
-        String pText = '$' + price;
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        // String price = product.getPrice ().toString ();
+        String price = formatter.format (product.getPrice ());
+        String pText = price;
         priceText.setText (pText);
 
         if (product.isTaxed ())
