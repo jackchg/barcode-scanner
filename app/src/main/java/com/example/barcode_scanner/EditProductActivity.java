@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class EditProductActivity extends AppCompatActivity
 {
@@ -85,36 +86,7 @@ public class EditProductActivity extends AppCompatActivity
     Product product = singleton.getProduct ();
     EditText priceEditText = findViewById (R.id.priceEditText);
 
-    /* Add listener to price text to format it on user input.  */
-    priceEditText.addTextChangedListener (new TextWatcher ()
-    {
-      @Override
-      public void beforeTextChanged (CharSequence s,
-                                     int start,
-                                     int count,
-                                     int after) {}
-      @Override
-      public void onTextChanged (CharSequence s,
-                                 int start,
-                                 int before,
-                                 int count) {}
-
-      @Override
-      public void afterTextChanged (Editable s)
-      {
-        priceEditText.removeTextChangedListener (this);
-
-        String price = formatToCurrency (s.toString ());
-        priceEditText.setText (price);
-
-        /* Set the cursor the end of the line.  */
-        priceEditText.setSelection (priceEditText.getText ().length ());
-
-        priceEditText.addTextChangedListener (this);
-      }
-    });
-
-    /* Prevent the user from adding numbers anywhere by the end of price.  */
+    /* Prevent the user from adding numbers other than the end of price.  */
     priceEditText.setCursorVisible (false);
     priceEditText.setOnClickListener(new View.OnClickListener ()
     {
@@ -148,8 +120,38 @@ public class EditProductActivity extends AppCompatActivity
     nameEditText.setText (name);
 
     Float price = product.getPrice ();
-    String priceString = price.toString ();
+    NumberFormat formatter = NumberFormat.getCurrencyInstance ();
+    String priceString = formatter.format (price).substring (1);
     priceEditText.setText (priceString);
+
+    /* Add listener to price text to format it on user input.  */
+    priceEditText.addTextChangedListener (new TextWatcher ()
+    {
+      @Override
+      public void beforeTextChanged (CharSequence s,
+                                     int start,
+                                     int count,
+                                     int after) {}
+      @Override
+      public void onTextChanged (CharSequence s,
+                                 int start,
+                                 int before,
+                                 int count) {}
+
+      @Override
+      public void afterTextChanged (Editable s)
+      {
+        priceEditText.removeTextChangedListener (this);
+
+        String price = formatToCurrency (s.toString ());
+        priceEditText.setText (price);
+
+        /* Set the cursor the end of the line.  */
+        priceEditText.setSelection (priceEditText.getText ().length ());
+
+        priceEditText.addTextChangedListener (this);
+      }
+    });
 
     CheckBox taxedCheckBox = findViewById (R.id.taxedCheckBox);
     Boolean taxed = product.isTaxed ();
