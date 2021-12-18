@@ -18,12 +18,16 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="Barcode: " />
-            <EditText
-                android:id="@+id/barcodeEditText"
+            <TextView
+                android:id="@+id/barcodeText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:inputType="number" />
+                android:layout_weight = "1"
+                android:textColor="?attr/editTextColor"
+                android:background="?attr/editTextBackground"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                />
         </TableRow>
         <TableRow >
             <TextView

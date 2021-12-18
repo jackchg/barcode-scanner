@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -31,7 +32,7 @@ public class EditProductActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        EditText barcode = findViewById (R.id.barcodeEditText);
+        TextView barcode = findViewById (R.id.barcodeText);
         if (barcode.getText ().toString ().isEmpty ())
           {
             Toast.makeText (getApplicationContext(),
@@ -54,7 +55,7 @@ public class EditProductActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        EditText barcode = findViewById (R.id.barcodeEditText);
+        TextView barcode = findViewById (R.id.barcodeText);
         if (barcode.getText ().toString ().isEmpty ())
         {
           Toast.makeText (getApplicationContext (),
@@ -124,13 +125,13 @@ public class EditProductActivity extends AppCompatActivity
       }
     });
 
-    EditText barcodeEditText = findViewById (R.id.barcodeEditText);
+    TextView barcodeText = findViewById (R.id.barcodeText);
     String barcode;
     if (product == null)
       {
         /* Product was not found in database, so we only fill out barcode.  */
         barcode = singleton.getBarcode ();
-        barcodeEditText.setText (barcode);
+        barcodeText.setText (barcode);
         if (priceEditText.getText ().toString ().equals (""))
           {
             /* Price is empty, set to 0.00.  */
@@ -140,7 +141,7 @@ public class EditProductActivity extends AppCompatActivity
       }
 
     barcode = product.getBarcode ();
-    barcodeEditText.setText (barcode);
+    barcodeText.setText (barcode);
 
     EditText nameEditText = findViewById (R.id.nameEditText);
     String name = product.getName ();
@@ -166,8 +167,8 @@ public class EditProductActivity extends AppCompatActivity
   private Product
   createProduct ()
   {
-    EditText barcodeEditText = findViewById (R.id.barcodeEditText);
-    String barcode = barcodeEditText.getText ().toString ();
+    TextView barcodeText = findViewById (R.id.barcodeText);
+    String barcode = barcodeText.getText ().toString ();
 
     EditText nameEditText = findViewById (R.id.nameEditText);
     String name = nameEditText.getText ().toString ();
