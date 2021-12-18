@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
@@ -30,9 +31,19 @@ public class EditProductActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        Product product = createProduct ();
-        BarcodeDatabase.addProduct (product);
-        singleton.setProduct (product);
+        EditText barcode = findViewById (R.id.barcodeEditText);
+        if (barcode.getText ().toString ().isEmpty ())
+          {
+            Toast.makeText (getApplicationContext(),
+                      "Scan a valid barcode",
+                           Toast.LENGTH_SHORT).show ();
+          }
+        else
+          {
+            Product product = createProduct ();
+            BarcodeDatabase.addProduct (product);
+            singleton.setProduct (product);
+          }
       }
     });
 
@@ -43,7 +54,17 @@ public class EditProductActivity extends AppCompatActivity
       public void
       onClick (View view)
       {
-        fillEditProductActivity();
+        EditText barcode = findViewById (R.id.barcodeEditText);
+        if (barcode.getText ().toString ().isEmpty ())
+        {
+          Toast.makeText (getApplicationContext (),
+              "Scan a valid barcode",
+              Toast.LENGTH_SHORT).show ();
+        }
+        else
+        {
+          fillEditProductActivity ();
+        }
       }
     });
   }
