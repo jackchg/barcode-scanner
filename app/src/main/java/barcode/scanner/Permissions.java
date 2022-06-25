@@ -1,4 +1,4 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,9 +7,6 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Permissions {
   private

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.barcode_scanner">
+    package="barcode.scanner">
 
     <uses-feature android:name="android.hardware.camera.any" />
 
@@ -14,10 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Barcodescanner">
         <activity
-            android:name=".EditProductActivity"
+            android:name="barcode.scanner.EditProductActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".ScanningActivity"
+            android:name="barcode.scanner.ScanningActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

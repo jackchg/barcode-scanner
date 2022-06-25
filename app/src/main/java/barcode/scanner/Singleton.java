@@ -1,14 +1,11 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import android.Manifest;
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
-import java.util.AbstractQueue;
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

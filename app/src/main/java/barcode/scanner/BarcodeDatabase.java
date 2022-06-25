@@ -1,4 +1,4 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import android.app.Activity;
 import android.database.Cursor;

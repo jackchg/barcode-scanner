@@ -1,4 +1,4 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -15,6 +15,8 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+// import com.example.barcode_scanner.R;
+import barcode.scanner.R;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;

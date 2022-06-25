@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_marginHorizontal="10dp"
     android:orientation="vertical"
-    tools:context=".EditProductActivity">
+    tools:context="barcode.scanner.EditProductActivity">
 
     <TableLayout
         android:layout_width="match_parent"

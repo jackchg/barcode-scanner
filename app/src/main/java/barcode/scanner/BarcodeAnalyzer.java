@@ -1,8 +1,7 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import android.app.Activity;
 import android.media.Image;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;

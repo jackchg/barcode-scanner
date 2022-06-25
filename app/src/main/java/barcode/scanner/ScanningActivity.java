@@ -1,4 +1,4 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+// import com.example.barcode_scanner.R;
+import barcode.scanner.R;
 
 import java.io.File;
 import java.text.NumberFormat;

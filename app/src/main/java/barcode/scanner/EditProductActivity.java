@@ -1,4 +1,4 @@
-package com.example.barcode_scanner;
+package barcode.scanner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,7 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DecimalFormat;
+// import com.example.barcode_scanner.R;
+import barcode.scanner.R;
+
 import java.text.NumberFormat;
 
 public class EditProductActivity extends AppCompatActivity
