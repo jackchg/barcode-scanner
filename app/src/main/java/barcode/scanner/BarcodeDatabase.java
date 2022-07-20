@@ -3,10 +3,17 @@ package barcode.scanner;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 public class BarcodeDatabase
 {
-  private static final String DB_NAME = "barcode_scanner_database";
+  private static final String DB_NAME = "barcode_scanner.db";
   private static final String SELECT_BARCODES = "SELECT * FROM sqlite_master "
                                                 + "WHERE type='table' "
                                                 + "AND name='barcodes';";
@@ -110,5 +117,21 @@ public class BarcodeDatabase
     Singleton singleton = Singleton.getInstance();
     SQLiteDatabase database = singleton.getBarcodeDatabase ();
     database.execSQL (replaceString);
+  }
+
+  /* https://stackoverflow.com/questions/36326836/android-export-sqlite-database-to-computer-mac */
+  public static void
+  exportDatabase(Activity context) throws IOException
+  {
+    File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            DB_NAME);
+    File currentDB = context.getApplicationContext().getDatabasePath(DB_NAME);
+    if (currentDB.exists()) {
+      FileChannel src = new FileInputStream(currentDB).getChannel();
+      FileChannel dst = new FileOutputStream(backupDB).getChannel();
+      dst.transferFrom(src, 0, src.size());
+      src.close();
+      dst.close();
+    }
   }
 }

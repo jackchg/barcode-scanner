@@ -3,6 +3,7 @@ package barcode.scanner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 // import com.example.barcode_scanner.R;
+import com.google.mlkit.vision.barcode.Barcode;
+
 import barcode.scanner.R;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 
 public class EditProductActivity extends AppCompatActivity
@@ -68,6 +72,28 @@ public class EditProductActivity extends AppCompatActivity
         else
         {
           fillEditProductActivity ();
+        }
+      }
+    });
+
+    Button exportDBButton = findViewById (R.id.exportDBButton);
+    exportDBButton.setOnClickListener (new View.OnClickListener ()
+    {
+      @Override
+      public void
+      onClick (View view)
+      {
+        try {
+          BarcodeDatabase.exportDatabase(EditProductActivity.this);
+          Toast.makeText(EditProductActivity.this,
+                  "Successfully exported barcodes to: "
+                          + Environment.DIRECTORY_DOWNLOADS + "/ directory.",
+                  Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+          e.printStackTrace();
+          Toast.makeText(EditProductActivity.this,
+                  "Failed to export barcodes.",
+                  Toast.LENGTH_SHORT).show();
         }
       }
     });
